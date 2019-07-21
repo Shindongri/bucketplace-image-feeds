@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useRef } from "react"
 import styled, { createGlobalStyle } from "styled-components"
-// import { fetchFeedsAPI } from './api'
-import datas from './data.json'
+import { BeatLoader } from "react-spinners"
+
+import { IResponse } from './App.spec'
 
 import Filter from "./components/Filter"
 import Card from "./components/Card"
+
+import useFetch from "./hooks/useFetch"
+// import useOnScreen from "./hooks/useOnScreen"
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -16,6 +20,7 @@ const GlobalStyle = createGlobalStyle`
 
 const Container = styled.section`
   display: grid;
+  justify-items: center;
   grid-template-columns: repeat(4, 1fr);
   row-gap: 40px;
   width: 1256px;
@@ -24,28 +29,38 @@ const Container = styled.section`
 `
 
 const App: React.FC = () => {
-  // const [page, setPage] = useState(1)
+  const ref = useRef(null)
 
-  // useEffect(() => {
-  //   const fetchFeeds = async () => {
-  //     try {
-  //       const response = await fetchFeedsAPI(page)
+  const [page] = useState(1)
+  const [onlyScrapped, setOnlyScrapped] = useState(false)
 
-  //       console.log(response)
-  //     } catch (e) {
-  //       console.error(e)
-  //     }
-  //   }
+  const { items, loading, error }: IResponse = useFetch(page)
 
-  //   fetchFeeds()
-  // }, [])
-  
+  // const onScreen = useOnScreen(ref, '-100px')
+
+  if (loading) {
+    return (
+    <BeatLoader
+    sizeUnit={"px"}
+    size={15}
+    color={'#36D7B7'}
+    loading={loading}
+    />
+    )
+  }
+
+  if (error) {
+    return null
+  }
+
+  const toggleScrapped = () => setOnlyScrapped(!onlyScrapped)
+
   return (
     <div className="App">
-      <Filter checked />
-      <Container>
+      <Filter onlyScrapped={ onlyScrapped } toggleScrapped={ toggleScrapped } />
+      <Container ref={ ref }>
         {
-          datas.map(({ id, image_url, nickname, profile_image_url }) => (<Card key={ id } image_url={ image_url } nickname={ nickname } profile_image_url={ profile_image_url }  />))
+          items.map(({ id, image_url, nickname, profile_image_url }) => (<Card key={ id } id={ id } image_url={ image_url } nickname={ nickname } profile_image_url={ profile_image_url } onlyScrapped={ onlyScrapped } />))
         }
       </Container>
       <GlobalStyle />

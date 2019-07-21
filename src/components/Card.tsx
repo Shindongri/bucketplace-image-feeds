@@ -1,7 +1,12 @@
 import React from "react"
 import styled from "styled-components"
 
+import useLocalStorage from "../hooks/useLocalStorage"
+
+import { IItem } from "./Card.spec"
+
 import ScrappedImage from "../assets/on-img@2x.png"
+import UnscrappedImage from "../assets/blue@2x.png"
 
 const Wrap = styled.div`
   width: 268px;
@@ -48,23 +53,54 @@ const ScrapImage = styled.img`
   cursor: pointer;
 `
 
-interface IProps {
-  image_url: string;
-  nickname: string;
-  profile_image_url: string;
-}
+const Card = ({
+  id,
+  image_url,
+  nickname,
+  profile_image_url,
+  onlyScrapped
+}: IItem) => {
+  const defaultChecked = false
 
-const Card = ({ image_url, nickname, profile_image_url }: IProps) => (
-  <Wrap>
-    <Header>
-      <ProfileImage src={ profile_image_url } />
-      <Nickname>{ nickname }</Nickname>
-    </Header>
-    <Container>
-      <ThumbnailImage src={ image_url } />
-      <ScrapImage src={ ScrappedImage } />
-    </Container>
-  </Wrap>
-)
+  const [scrapped, setScrapped] = useLocalStorage(id, defaultChecked)
+
+  if (onlyScrapped) {
+    if (scrapped) {
+      return (
+        <Wrap>
+          <Header>
+            <ProfileImage src={profile_image_url} />
+            <Nickname>{nickname}</Nickname>
+          </Header>
+          <Container>
+            <ThumbnailImage src={image_url} />
+            <ScrapImage
+              src={scrapped ? UnscrappedImage : ScrappedImage}
+              onClick={() => setScrapped(!scrapped)}
+            />
+          </Container>
+        </Wrap>
+      )
+    }
+
+    return null
+  }
+
+  return (
+    <Wrap>
+      <Header>
+        <ProfileImage src={profile_image_url} />
+        <Nickname>{nickname}</Nickname>
+      </Header>
+      <Container>
+        <ThumbnailImage src={image_url} />
+        <ScrapImage
+          src={scrapped ? UnscrappedImage : ScrappedImage}
+          onClick={() => setScrapped(!scrapped)}
+        />
+      </Container>
+    </Wrap>
+  )
+}
 
 export default Card
