@@ -1,4 +1,4 @@
-Getting Started
+# Getting Started
 
 ## Start
 
@@ -12,7 +12,7 @@ Builds the app for production to the `build` folder.<br>
 
 Your app is ready to be deployed!
 
-### `npm run build`
+### `yarn build`
 
 ## Following technologies are used
 
