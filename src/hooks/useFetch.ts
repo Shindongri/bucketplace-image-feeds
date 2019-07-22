@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { fetchListAPI } from "../api"
 
 import { IItem } from '../components/Card.spec'
 
 const useFetch = (page: number) => {
+  const [hasNext, setHasNext] = useState(true)
   const [items, setItems] = useState<IItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -11,10 +12,13 @@ const useFetch = (page: number) => {
   useEffect(() => {
     const callUrl = async () => {
       try {
-        const { status, data } = await fetchListAPI(page)
+        if (hasNext) {
+          const { status, data } = await fetchListAPI(page)
 
-        if (status === 200) {
-          setItems([...items, ...data])
+          if (status === 200) {
+            setHasNext(data.length > 0)
+            setItems([...items, ...data])
+          }
         }
       } catch (e) {
         setError(e)

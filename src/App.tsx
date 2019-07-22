@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState } from "react"
 import styled, { createGlobalStyle } from "styled-components"
 import { BeatLoader } from "react-spinners"
 
@@ -8,7 +8,7 @@ import Filter from "./components/Filter"
 import Card from "./components/Card"
 
 import useFetch from "./hooks/useFetch"
-// import useOnScreen from "./hooks/useOnScreen"
+import useInfinitePagination from "./hooks/useInfinitePagination"
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -29,14 +29,12 @@ const Container = styled.section`
 `
 
 const App: React.FC = () => {
-  const ref = useRef(null)
-
-  const [page] = useState(1)
+  const [page, setPage] = useState(1)
   const [onlyScrapped, setOnlyScrapped] = useState(false)
 
   const { items, loading, error }: IResponse = useFetch(page)
 
-  // const onScreen = useOnScreen(ref, '-100px')
+  useInfinitePagination({ page, setPage, onlyScrapped })
 
   if (loading) {
     return (
@@ -58,7 +56,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Filter onlyScrapped={ onlyScrapped } toggleScrapped={ toggleScrapped } />
-      <Container ref={ ref }>
+      <Container>
         {
           items.map(({ id, image_url, nickname, profile_image_url }) => (<Card key={ id } id={ id } image_url={ image_url } nickname={ nickname } profile_image_url={ profile_image_url } onlyScrapped={ onlyScrapped } />))
         }

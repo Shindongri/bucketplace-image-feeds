@@ -67,7 +67,7 @@ const Card = ({
   if (onlyScrapped) {
     if (scrapped) {
       return (
-        <Wrap>
+        <Wrap className="item">
           <Header>
             <ProfileImage src={profile_image_url} />
             <Nickname>{nickname}</Nickname>
@@ -87,7 +87,7 @@ const Card = ({
   }
 
   return (
-    <Wrap>
+    <Wrap className="item">
       <Header>
         <ProfileImage src={profile_image_url} />
         <Nickname>{nickname}</Nickname>
